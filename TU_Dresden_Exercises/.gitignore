@@ -1,0 +1,6 @@
+build*
+.vscode*
+cg1
+CMake
+solution
+CMakeLists.txt
