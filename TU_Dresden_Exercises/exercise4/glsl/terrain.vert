@@ -6,7 +6,8 @@
 in vec4 position;
 
 out vec3 fragNormal;
-
+out vec3 fragPosition;
+out vec2 fragTexCoord;
 
 uniform mat4 mvp;
 
@@ -19,6 +20,8 @@ void main()
 {
 	vec4 modifiedPosition = position;
 	modifiedPosition.y = getTerrainHeight(position.xz);
+	fragPosition = modifiedPosition.xyz;
+	fragTexCoord = position.xz/25.5;
 	gl_Position = mvp * modifiedPosition;
 	// calculate vertex normal using finite differences
 	vec3 dx = vec3(1.0, getTerrainHeight(position.xz + vec2(0.01, 0.0)) - modifiedPosition.y, 0.0);

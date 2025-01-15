@@ -59,10 +59,29 @@ void Viewer::LoadShaders()
 GLuint CreateTexture(const unsigned char* fileData, size_t fileLength, bool repeat = true)
 {
 	GLuint textureName;
+	glGenTextures(1, &textureName);
+	glBindTexture(GL_TEXTURE_2D, textureName);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int textureWidth, textureHeight, textureChannels;
 	auto pixelData = stbi_load_from_memory(fileData, (int)fileLength, &textureWidth, &textureHeight, &textureChannels, 3);
-	textureName = 0;
+	if (!pixelData)
+	{
+		std::cerr << "Failed to load texture" << std::endl;
+		return 0;
+	}
+
+	// Determine the correct format (RGB or RGBA)
+	GLenum format = (textureChannels == 4) ? GL_RGBA : GL_RGB;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, format, textureWidth, textureHeight, 0, format, GL_UNSIGNED_BYTE, pixelData);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	
 	stbi_image_free(pixelData);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureName;
 }
 
@@ -197,20 +216,27 @@ void Viewer::drawContents()
 	int visiblePatches = 0;
 
 	RenderSky();
-	
+
+	terrainShader.bind();
 	//render terrain
 	glEnable(GL_DEPTH_TEST);
 	terrainVAO.bind();
-	terrainShader.bind();	
-	
+	terrainShader.setUniform("screenSize", Eigen::Vector2f(width(), height()), false);
+	terrainShader.setUniform("mvp", mvp);
+	terrainShader.setUniform("cameraPos", cameraPosition, false);
+	terrainShader.setUniform("grassTexture", Eigen::Vector2f(width(), height()), false);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, grassTexture);
+	// Draw the terrain
+	glDrawElements(GL_TRIANGLE_STRIP, INDICES_SIZE, GL_UNSIGNED_INT, nullptr);
+
 	terrainShader.setUniform("screenSize", Eigen::Vector2f(width(), height()), false);
 	terrainShader.setUniform("mvp", mvp);
 	terrainShader.setUniform("cameraPos", cameraPosition, false);
 	/* Task: Render the terrain */
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(RESTART_INDEX);
-	glDrawElements(GL_TRIANGLE_STRIP, INDICES_SIZE, GL_UNSIGNED_INT, nullptr);
-	glDisable(GL_PRIMITIVE_RESTART);
 
 	
 
