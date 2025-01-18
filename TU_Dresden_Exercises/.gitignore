@@ -1,6 +1,9 @@
 build*
-.vs*
-cg1
+.vscode*
 CMake
+data
+exercise1_2
+exercise3
+exercise5
 solution
 CMakeLists.txt

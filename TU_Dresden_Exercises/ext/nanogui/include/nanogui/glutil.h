@@ -11,7 +11,7 @@
 /** \file */
 
 #pragma once
-#include <glad/glad.h>
+
 #include <nanogui/opengl.h>
 #include <Eigen/Geometry>
 #include <map>

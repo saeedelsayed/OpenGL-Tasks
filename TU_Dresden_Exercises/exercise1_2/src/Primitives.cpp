@@ -19,47 +19,7 @@ void CreateQuad(HEMesh& mesh)
 void CreateCube(HEMesh& mesh)
 {
 	mesh.clear();
-	std::vector<OpenMesh::VertexHandle> vhandles;
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, -0.5f)));
-	mesh.add_face(vhandles);
-
-	vhandles.clear();
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, 0.5f)));
-	mesh.add_face(vhandles);
-
-	vhandles.clear();
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, 0.5f)));
-	mesh.add_face(vhandles);
-
-	vhandles.clear();
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, 0.5f)));
-	mesh.add_face(vhandles);
-
-	vhandles.clear();
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, -0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, -0.5f, -0.5f)));
-	mesh.add_face(vhandles);
-
-	vhandles.clear();
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, -0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(-0.5f, 0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, 0.5f)));
-	vhandles.push_back(mesh.add_vertex(OpenMesh::Vec3f(0.5f, 0.5f, -0.5f)));
-	mesh.add_face(vhandles);
+	/* Task 1.2.1 */
 }
 
 void CreateTetrahedron(HEMesh& mesh, float a)

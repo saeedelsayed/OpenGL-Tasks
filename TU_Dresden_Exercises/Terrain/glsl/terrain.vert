@@ -5,9 +5,7 @@
 
 in vec4 position;
 
-out vec3 fragNormal;
-out vec3 fragPosition;
-out vec2 fragTexCoord;
+
 
 uniform mat4 mvp;
 
@@ -18,18 +16,7 @@ float getTerrainHeight(vec2 p);
 
 void main()
 {
-	vec4 modifiedPosition = position;
-	modifiedPosition.y = getTerrainHeight(position.xz);
-	fragPosition = modifiedPosition.xyz;
-	fragTexCoord = position.xz/25.5;
-	gl_Position = mvp * modifiedPosition;
-	// calculate vertex normal using finite differences
-	vec3 dx = vec3(1.0, getTerrainHeight(position.xz + vec2(0.01, 0.0)) - modifiedPosition.y, 0.0);
-	vec3 dz = vec3(0.0, getTerrainHeight(position.xz + vec2(0.0, 0.01)) - modifiedPosition.y, 1.0);
-	vec3 normal = normalize(cross(dz, dx));
-
-	// pass the normal to the fragment shader
-	fragNormal = normal;
+	gl_Position = mvp * position;
 }
 
 //source: https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83

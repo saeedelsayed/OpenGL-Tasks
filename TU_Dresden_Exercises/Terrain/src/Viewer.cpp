@@ -17,10 +17,7 @@
 #include "glsl.h"
 #include "textures.h"
 
-#define INDICES_SIZE 2 * (PATCH_SIZE - 1) * PATCH_SIZE + 2 * (PATCH_SIZE - 2)
-
 const uint32_t PATCH_SIZE = 256; //number of vertices along one side of the terrain patch
-const unsigned int RESTART_INDEX = 0xFFFF;
 
 Viewer::Viewer()
 	: AbstractViewer("CG1 Exercise 4"),
@@ -59,29 +56,10 @@ void Viewer::LoadShaders()
 GLuint CreateTexture(const unsigned char* fileData, size_t fileLength, bool repeat = true)
 {
 	GLuint textureName;
-	glGenTextures(1, &textureName);
-	glBindTexture(GL_TEXTURE_2D, textureName);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int textureWidth, textureHeight, textureChannels;
 	auto pixelData = stbi_load_from_memory(fileData, (int)fileLength, &textureWidth, &textureHeight, &textureChannels, 3);
-	if (!pixelData)
-	{
-		std::cerr << "Failed to load texture" << std::endl;
-		return 0;
-	}
-
-	// Determine the correct format (RGB or RGBA)
-	GLenum format = (textureChannels == 4) ? GL_RGBA : GL_RGB;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, textureWidth, textureHeight, 0, format, GL_UNSIGNED_BYTE, pixelData);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	
+	textureName = 0;
 	stbi_image_free(pixelData);
-	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureName;
 }
 
@@ -96,32 +74,34 @@ void Viewer::CreateGeometry()
 	
 	std::vector<Eigen::Vector4f> positions;
 	std::vector<uint32_t> indices;
-	// Generate positions and indices for a terrain patch with a single triangle strip
-	// The terrain patch is a grid of size PATCH_SIZE x PATCH_SIZE
-	// The grid is rendered as a triangle strip, so the indices are generated accordingly
-	positions.reserve(PATCH_SIZE * PATCH_SIZE);
-	// The terrain is a flat grid, so the y-coordinate is always 0
-	// The x and z coordinates are in the range [0, PATCH_SIZE - 1]
-	// The w-coordinate is 1, so the positions can be directly multiplied with the MVP matrix
-	// The indices are generated in a zig-zag pattern to form a triangle strip
+	
+	/*Generate positions and indices for a terrain patch with a
+	  single triangle strip */
 
-	indices.reserve(INDICES_SIZE);
+	  // Generate positions for PATCH_SIZE x PATCH_SIZE grid
 	for (uint32_t z = 0; z < PATCH_SIZE; ++z)
+	{
 		for (uint32_t x = 0; x < PATCH_SIZE; ++x)
-			positions.push_back(Eigen::Vector4f((float)x, 0, (float)z, 1));
+		{
+			positions.emplace_back(x, 0.0f, z, 1.0f); // Flat patch in xz-plane
+		}
+	}
+
+	// Generate indices for a single triangle strip
 	for (uint32_t z = 0; z < PATCH_SIZE - 1; ++z)
 	{
 		for (uint32_t x = 0; x < PATCH_SIZE; ++x)
 		{
-			indices.push_back(z * PATCH_SIZE + x);
-			indices.push_back((z + 1) * PATCH_SIZE + x);
+			indices.push_back(z * PATCH_SIZE + x);       // Current row
+			indices.push_back((z + 1) * PATCH_SIZE + x); // Next row
 		}
-		indices.push_back(RESTART_INDEX);
+		// Add degenerate triangles if not the last row
+		if (z < PATCH_SIZE - 2)
+		{
+			indices.push_back((z + 1) * PATCH_SIZE + (PATCH_SIZE - 1));
+			indices.push_back((z + 1) * PATCH_SIZE);
+		}
 	}
-
-	/*Generate positions and indices for a terrain patch with a
-	  single triangle strip */
-
 
 	terrainShader.bind();
 	terrainPositions.uploadData(positions).bindToAttribute("position");
@@ -216,29 +196,19 @@ void Viewer::drawContents()
 	int visiblePatches = 0;
 
 	RenderSky();
-
-	terrainShader.bind();
+	
 	//render terrain
 	glEnable(GL_DEPTH_TEST);
 	terrainVAO.bind();
-	terrainShader.setUniform("screenSize", Eigen::Vector2f(width(), height()), false);
-	terrainShader.setUniform("mvp", mvp);
-	terrainShader.setUniform("cameraPos", cameraPosition, false);
-	terrainShader.setUniform("grassTexture", Eigen::Vector2f(width(), height()), false);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, grassTexture);
-	// Draw the terrain
-	glDrawElements(GL_TRIANGLE_STRIP, INDICES_SIZE, GL_UNSIGNED_INT, nullptr);
-
+	terrainShader.bind();	
+	
 	terrainShader.setUniform("screenSize", Eigen::Vector2f(width(), height()), false);
 	terrainShader.setUniform("mvp", mvp);
 	terrainShader.setUniform("cameraPos", cameraPosition, false);
 	/* Task: Render the terrain */
-	glEnable(GL_PRIMITIVE_RESTART);
-	glPrimitiveRestartIndex(RESTART_INDEX);
 
-	
+	// Draw the terrain patch
+	glDrawElements(GL_TRIANGLE_STRIP, terrainIndices.bufferSize(), GL_UNSIGNED_INT, nullptr);
 
 	//Render text
 	nvgBeginFrame(mNVGContext, (float)width(), (float)height(), mPixelRatio);

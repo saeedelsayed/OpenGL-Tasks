@@ -3,20 +3,17 @@
 // chair of the TU Dresden. Do not distribute! 
 // Copyright (C) CGV TU Dresden - All Rights Reserved
 
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-
-layout(location = 0) in vec4 in_position;
-layout(location = 1) in vec4 in_color;
+in vec4 in_position;
 
 out vec4 fragment_color;
-out vec4 fragment_position;
+
+
+
 
 void main(void)
 {
-	gl_Position = projectionMatrix * modelViewMatrix * in_position;
-	fragment_color = in_color;
-	fragment_position = in_position;
+	gl_Position = in_position;
+	fragment_color = in_position;
 
 	/* - 2.2.2 (b)
 	 * Declare a new "in" variable with the name "in_color". Instead of setting
