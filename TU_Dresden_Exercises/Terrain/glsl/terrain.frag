@@ -4,6 +4,7 @@
 // Copyright (C) CGV TU Dresden - All Rights Reserved
 
 
+in vec3 fragNormal; 
 
 out vec4 color;
 
@@ -33,8 +34,8 @@ vec4 getBackgroundColor()
 void main()
 {
 	//surface geometry
-	vec3 n = vec3(0, 1, 0);
-	vec3 dirToViewer = vec3(0, 1, 0);
+	vec3 n = fragNormal;
+	vec3 dirToViewer = normalize(cameraPos - vec3(gl_FragCoord.x, 0.0, gl_FragCoord.y));
 
 	//material properties	
 	color = vec4(0.6, 0.6, 0.6, 1);

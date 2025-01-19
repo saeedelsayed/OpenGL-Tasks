@@ -5,7 +5,7 @@
 
 in vec4 position;
 
-
+out vec3 fragNormal;
 
 uniform mat4 mvp;
 
@@ -16,7 +16,22 @@ float getTerrainHeight(vec2 p);
 
 void main()
 {
-	gl_Position = mvp * position;
+	vec4 worldPosition = position;
+	worldPosition.y = getTerrainHeight(position.xz); // update height 
+	
+	// Calculate normals using finite differences
+    float delta = 1.0;
+    vec2 dx = vec2(delta, 0);
+    vec2 dz = vec2(0, delta);
+
+    float heightL = getTerrainHeight(worldPosition.xz - dx); // Height to the left
+    float heightR = getTerrainHeight(worldPosition.xz + dx); // Height to the right
+    float heightD = getTerrainHeight(worldPosition.xz - dz); // Height below
+    float heightU = getTerrainHeight(worldPosition.xz + dz); // Height above
+
+    vec3 normal = normalize(vec3(heightL - heightR, 2.0, heightD - heightU));
+    fragNormal = normal;
+	gl_Position = mvp * worldPosition;
 }
 
 //source: https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
