@@ -58,8 +58,32 @@ GLuint CreateTexture(const unsigned char* fileData, size_t fileLength, bool repe
 	GLuint textureName;
 	int textureWidth, textureHeight, textureChannels;
 	auto pixelData = stbi_load_from_memory(fileData, (int)fileLength, &textureWidth, &textureHeight, &textureChannels, 3);
-	textureName = 0;
+	if (!pixelData)
+	{
+		std::cout << "Failed to load texture data!" << std::endl;
+		return 0;
+	}
+
+	// Generate and bind the texture
+	glGenTextures(1, &textureName);
+	glBindTexture(GL_TEXTURE_2D, textureName);
+
+	// Upload texture data
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+
+	// Set texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Generate mipmaps
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// Free the pixel data and unbind the texture
 	stbi_image_free(pixelData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	return textureName;
 }
 
@@ -206,6 +230,11 @@ void Viewer::drawContents()
 	terrainShader.setUniform("mvp", mvp);
 	terrainShader.setUniform("cameraPos", cameraPosition, false);
 	/* Task: Render the terrain */
+
+	// Bind grass texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, grassTexture);
+	terrainShader.setUniform("grassTexture", 0); // Texture unit 0
 
 	// Draw the terrain patch
 	glDrawElements(GL_TRIANGLE_STRIP, terrainIndices.bufferSize(), GL_UNSIGNED_INT, nullptr);

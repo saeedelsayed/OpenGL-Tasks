@@ -6,6 +6,7 @@
 in vec4 position;
 
 out vec3 fragNormal;
+out vec3 fragWorldPos; // Pass world position to the fragment shader
 
 uniform mat4 mvp;
 
@@ -31,6 +32,9 @@ void main()
 
     vec3 normal = normalize(vec3(heightL - heightR, 2.0, heightD - heightU));
     fragNormal = normal;
+
+	fragWorldPos = worldPosition.xyz; // Pass world position
+
 	gl_Position = mvp * worldPosition;
 }
 
