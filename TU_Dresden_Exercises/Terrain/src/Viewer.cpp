@@ -236,6 +236,11 @@ void Viewer::drawContents()
 	glBindTexture(GL_TEXTURE_2D, grassTexture);
 	terrainShader.setUniform("grassTexture", 0); // Texture unit 0
 
+	// Bind rock texture
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, rockTexture);
+	terrainShader.setUniform("rockTexture", 1); // Texture unit 1
+
 	// Draw the terrain patch
 	glDrawElements(GL_TRIANGLE_STRIP, terrainIndices.bufferSize(), GL_UNSIGNED_INT, nullptr);
 

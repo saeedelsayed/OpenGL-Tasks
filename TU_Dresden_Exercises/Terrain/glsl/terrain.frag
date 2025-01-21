@@ -14,6 +14,7 @@ uniform vec3 cameraPos;
 
 uniform sampler2D background;
 uniform sampler2D grassTexture; // Grass texture
+uniform sampler2D rockTexture; // Rock texture
 
 uniform vec2 screenSize;
 
@@ -38,18 +39,23 @@ void main()
 {
 	//surface geometry
 	vec3 n = fragNormal;
-	vec3 dirToViewer = normalize(cameraPos - vec3(gl_FragCoord.x, 0.0, gl_FragCoord.y));
+	vec3 dirToViewer = normalize(cameraPos - fragWorldPos);
 
 	// Sample grass texture using scaled xz world coordinates
     vec2 textureCoord = fragWorldPos.xz / 25.5; // Scale coordinates for texture tiling
     vec4 grassColor = texture(grassTexture, textureCoord);
+	vec4 rockColor = texture(rockTexture, textureCoord);
+
+    // Calculate blend factor based on the x-component of the normal
+    float blendFactor = clamp(0.5 + 0.5 * n.x, 0.0, 1.0); // Scale n.x from [-1, 1] to [0, 1]
+	vec4 blendedColor = mix(grassColor, rockColor, blendFactor);
 
 	float specular = 0;
 
 	
 
 	//Calculate light
-	color = calculateLighting(grassColor, specular, n, dirToViewer);
+	color = calculateLighting(blendedColor, specular, n, dirToViewer);
 
 	
 }
