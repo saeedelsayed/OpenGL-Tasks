@@ -6,7 +6,9 @@
 in vec4 position;
 
 out vec3 fragNormal;
-out vec3 fragWorldPos; // Pass world position to the fragment shader
+out vec3 fragWorldPos; // Pass world position to the fragment shaderout
+out vec3 fragTangent;
+out vec3 fragBitangent;
 
 uniform mat4 mvp;
 
@@ -32,6 +34,9 @@ void main()
 
     vec3 normal = normalize(vec3(heightL - heightR, 2.0, heightD - heightU));
     fragNormal = normal;
+
+	fragTangent = normalize(vec3(1.0, (heightR - heightL)/delta, 0.0)); // Tangent in x direction
+	fragBitangent = normalize(vec3(0.0, (heightU - heightD)/delta, 1.0)); // Bitangent in z direction
 
 	fragWorldPos = worldPosition.xyz; // Pass world position
 

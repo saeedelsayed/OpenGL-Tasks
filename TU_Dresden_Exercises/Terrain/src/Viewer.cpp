@@ -241,6 +241,26 @@ void Viewer::drawContents()
 	glBindTexture(GL_TEXTURE_2D, rockTexture);
 	terrainShader.setUniform("rockTexture", 1); // Texture unit 1
 
+	// Bind road color texture
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, roadColorTexture);
+	terrainShader.setUniform("roadColorTexture", 2); // Texture unit 2
+
+	// Bind alpha map
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, alphaMap);
+	terrainShader.setUniform("alphaMap", 3); // Texture unit 3
+	
+	// Bind road specular map
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, roadSpecularMap);
+	terrainShader.setUniform("roadSpecularMap", 4); // Texture unit 4
+	
+	// Bind road normal map
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, roadNormalMap);
+	terrainShader.setUniform("roadNormalMap", 5); // Texture unit 5
+
 	// Draw the terrain patch
 	glDrawElements(GL_TRIANGLE_STRIP, terrainIndices.bufferSize(), GL_UNSIGNED_INT, nullptr);
 
