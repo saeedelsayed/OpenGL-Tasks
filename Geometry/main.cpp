@@ -101,6 +101,19 @@ int main()
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	// Load the icon image
+	int width, height, channels;
+	unsigned char* image = stbi_load("icon.png", &width, &height, &channels, 4); // Load as RGBA
+
+	GLFWimage icon;
+	icon.width = width;
+	icon.height = height;
+	icon.pixels = image;
+
+	glfwSetWindowIcon(window, 1, &icon);
+
+	stbi_image_free(image);
+
 
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
