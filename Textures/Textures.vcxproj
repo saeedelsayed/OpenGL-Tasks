@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\faculty\github\OpenGL\Textures\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\faculty\github\OpenGL\Textures\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\faculty\github\OpenGL-Tasks\Textures\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\faculty\github\OpenGL-Tasks\Textures\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\faculty\github\OpenGL\Textures\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\faculty\github\OpenGL\Textures\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\faculty\github\OpenGL-Tasks\Textures\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\faculty\github\OpenGL-Tasks\Textures\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
